@@ -12,3 +12,4 @@
  - STM32 folder is the code for device driver implementation in C language.
  - Gateway folder contains Python code for the gateway, which acts as a communication link between hardware components and AdaFruit Server.
  ## About The System Behavior:
+ 
