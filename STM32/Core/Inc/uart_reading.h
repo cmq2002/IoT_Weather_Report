@@ -14,6 +14,7 @@
 #include "dht20.h"
 #include "i2c-lcd.h"
 #include "software_timer.h"
+#include "scheduler.h"
 
 #define INIT_UART 0
 
@@ -41,6 +42,8 @@ extern uint8_t buffer_flag;
 void cmd_parser_fsm();
 
 void uart_control_fsm();
+
+void counter10s();
 
 void Scan_Addr();
 

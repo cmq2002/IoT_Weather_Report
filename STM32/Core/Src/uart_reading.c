@@ -29,6 +29,7 @@ uint8_t cmdParserStatus = INIT_UART;
 uint8_t cmd_data[MAX_CMD_SIZE];
 uint8_t cmd_index = 0;
 uint8_t cmd_flag = INIT_UART;
+uint8_t counter = WAIT;
 
 int isCmdEqualToRST(uint8_t str[]){
 	int flag = 0;
@@ -73,29 +74,26 @@ void cmd_parser_fsm(){
 	}
 }
 
+//Using Scheduler to synchronize
+void counter10s(){
+	counter--;
+}
+
 void uart_control_fsm()
 {
 	switch (cmd_flag){
 		case INIT_UART:
 			cmd_flag = AUTO;
-			setTimer2(1);
 			break;
 		case AUTO:
-			if (timer2_flag == 1){
-				HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
-				setTimer2(300);
-			}
-			reading_fsm_run();
-			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, SET);
+			SCH_Add_Task(turnLedOn(), 0, 0);
+			SCH_Add_Task(dht20_output(), 0, 0);
+			SCH_Add_Task(turnLedOff(), 0, 0);
 			break;
 		case isCAP:
-			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
-			setTimer4(1000);
-			cmd_flag = WAIT;
-			break;
-		case WAIT:
-			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
-			if (timer4_flag == 1) cmd_flag = INIT_UART;
+			SCH_Add_Task(turnLedOn(), 0, 0);
+			SCH_Add_Task(counter10s(), 0, 0);
+			if (counter <= 0) cmd_flag = INIT_UART;
 			break;
 		case isRST:
 			cmd_flag = INIT_UART;
@@ -104,6 +102,39 @@ void uart_control_fsm()
 			break;
 	}
 }
+
+//User timer to synchronize
+//void uart_control_fsm()
+//{
+//	switch (cmd_flag){
+//		case INIT_UART:
+//			cmd_flag = AUTO;
+//			setTimer2(1);
+//			break;
+//		case AUTO:
+//			if (timer2_flag == 1){
+//				HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
+//				dht20_output();
+//				setTimer2(300);
+//			}
+//			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, SET);
+//			break;
+//		case isCAP:
+//			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
+//			setTimer3(1000);
+//			cmd_flag = WAIT;
+//			break;
+//		case WAIT:
+//			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
+//			if (timer3_flag == 1) cmd_flag = INIT_UART;
+//			break;
+//		case isRST:
+//			cmd_flag = INIT_UART;
+//			break;
+//		default:
+//			break;
+//	}
+//}
 
 void Scan_Addr() {
     char info[] = "\r\n\r\nScanning I2C bus...\r\n";

@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "software_timer.h"
+#include "scheduler.h"
 #include "i2c-lcd.h"
 #include "dht20.h"
 #include "uart_reading.h"
@@ -75,6 +76,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 		HAL_UART_Receive_IT(&huart2, &buffer_byte, 1);
 	}
 }
+
+void intercep_UartCmd (void){
+	  if (buffer_flag == 1){
+		  cmd_parser_fsm();
+		  buffer_flag = 0;
+	  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -117,24 +125,30 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   //Scan the address of I2C device
   Scan_Addr();
-  //Init sequence for LCD
+  //Initialization for LCD
   lcd_clear_display();
   lcd_init();
   lcd_greeting();
-  //Init sequence for DHT-20
+  //Initialization for DHT-20
   dht20_init();
-  setTimer3(300);
+//  setTimer1(300);
+  //Add task into scheduler dispatcher
+  SCH_Add_Task(intercep_UartCmd(), 0, 1);
+  SCH_Add_Task(uart_control_fsm(), 300, 1);
   while (1)
   {
-	  if (buffer_flag == 1){
-		  cmd_parser_fsm();
-		  buffer_flag = 0;
-	  }
-	  if(timer3_flag == 1){
-		  setTimer3(1);
-		  uart_control_fsm();
-	  }
+	  //Using timer to synchronize
+//	  if (buffer_flag == 1){
+//		  cmd_parser_fsm();
+//		  buffer_flag = 0;
+//	  }
+//	  if(timer1_flag == 1){
+//		  setTimer1(1);
+//		  uart_control_fsm();
+//	  }
 
+	  //Using scheduler dispatcher to synchronize
+	  SCH_Dispatch_Tasks();
 
 	  //Testing hardware
 //	  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
@@ -327,6 +341,7 @@ static void MX_GPIO_Init(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	timerRun();
+	SCH_Update();
 }
 /* USER CODE END 4 */
 

@@ -13,7 +13,6 @@ extern UART_HandleTypeDef huart2;
 
 uint16_t value_x10[2] = {0, 0};
 char temp[20], humid[20];
-int status = INIT;
 
 void dht20_init(void){
 	//Set register when call a wrong reset
@@ -98,28 +97,16 @@ void dht20_read(uint16_t* value){
 
 }
 
-void reading_fsm_run(void){
-	switch(status){
-		case INIT:
-			setTimer1(1);
-			status = READ;
-			break;
-		case READ:
-			if (timer1_flag == 1){
-				dht20_read(value_x10);
-				char msg[64];
-				//11011111 is degree character (manual)
-				sprintf(temp, "Temp:  %d.%d %cC",value_x10[1]/10,value_x10[1]%10 ,0b11011111);
-				sprintf(msg, "!TEMP:%d.%d#",value_x10[1]/10,value_x10[1]%10);
-				HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
-				sprintf(humid,"Humid: %01d.%d %%   ",value_x10[0]/10,value_x10[0]%10);
-				sprintf(msg, "!HUMID:%01d.%d#",value_x10[0]/10,value_x10[0]%10);
-				HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
-				setTimer1(300);
-			}
-			break;
-		default:
-			break;
-	}
+void dht20_output(void){
+	dht20_read(value_x10);
+	char msg[64];
+	//11011111 is degree character (manual)
+	sprintf(temp, "Temp:  %d.%d %cC",value_x10[1]/10,value_x10[1]%10 ,0b11011111);
+	sprintf(msg, "!TEMP:%d.%d#",value_x10[1]/10,value_x10[1]%10);
+	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
+	sprintf(humid,"Humid: %01d.%d %%   ",value_x10[0]/10,value_x10[0]%10);
+	sprintf(msg, "!HUMID:%01d.%d#",value_x10[0]/10,value_x10[0]%10);
+	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
+	setTimer1(300);
 	lcd_show_value();
 }

@@ -14,9 +14,6 @@
 #include "i2c-lcd.h"
 #include "software_timer.h"
 
-#define INIT 0
-#define READ 1
-
 extern uint16_t value_x10[2];
 extern char temp[20],humid[20];
 
@@ -28,6 +25,6 @@ void dht20_read(uint16_t*);
 
 void dht20_start(void);
 
-void reading_fsm_run(void);
+void dht20_output(void);
 
 #endif /* INC_DHT20_H_ */
