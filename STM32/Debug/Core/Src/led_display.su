@@ -1,0 +1,3 @@
+../Core/Src/led_display.c:10:6:turnLedOn	8	static
+../Core/Src/led_display.c:14:6:turnLedOff	8	static
+../Core/Src/led_display.c:18:6:toggleLed	8	static

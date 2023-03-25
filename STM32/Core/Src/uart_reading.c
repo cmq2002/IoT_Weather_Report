@@ -5,13 +5,6 @@
  *      Author: acer
  */
 
-
-/*
- * fsm.c
- *
- *  Created on: Nov 20, 2022
- *      Author: PC
- */
 #include "uart_reading.h"
 
 extern UART_HandleTypeDef huart2;
@@ -79,21 +72,59 @@ void counter10s(){
 	counter--;
 }
 
+void groupAction(){
+	turnLedOn();
+	dht20_output();
+}
+
+//void uart_control_fsm()
+//{
+//	switch (cmd_flag){
+//		case INIT_UART:
+//			cmd_flag = AUTO;
+//			break;
+//		case AUTO:
+//			SCH_Add_Task(turnLedOff, 0, 300);
+//			SCH_Add_Task(groupAction, 299, 300);
+//			break;
+//		case isCAP:
+//			SCH_Add_Task(turnLedOn, 0, 0);
+//			SCH_Add_Task(counter10s, 0, 0);
+//			if (counter <= 0) cmd_flag = INIT_UART;
+//			break;
+//		case isRST:
+//			counter = WAIT;
+//			cmd_flag = INIT_UART;
+//			break;
+//		default:
+//			break;
+//	}
+//}
+
+//User timer to synchronize
 void uart_control_fsm()
 {
 	switch (cmd_flag){
 		case INIT_UART:
 			cmd_flag = AUTO;
+			setTimer2(1);
 			break;
 		case AUTO:
-			SCH_Add_Task(turnLedOn(), 0, 0);
-			SCH_Add_Task(dht20_output(), 0, 0);
-			SCH_Add_Task(turnLedOff(), 0, 0);
+			if (timer2_flag == 1){
+				turnLedOn();
+				dht20_output();
+				setTimer2(1000);
+			}
+			turnLedOff();
 			break;
 		case isCAP:
-			SCH_Add_Task(turnLedOn(), 0, 0);
-			SCH_Add_Task(counter10s(), 0, 0);
-			if (counter <= 0) cmd_flag = INIT_UART;
+			setTimer3(1000);
+			cmd_flag = WAIT;
+			turnLedOn();
+			break;
+		case WAIT:
+			turnLedOn();
+			if (timer3_flag == 1) cmd_flag = INIT_UART;
 			break;
 		case isRST:
 			cmd_flag = INIT_UART;
@@ -102,39 +133,6 @@ void uart_control_fsm()
 			break;
 	}
 }
-
-//User timer to synchronize
-//void uart_control_fsm()
-//{
-//	switch (cmd_flag){
-//		case INIT_UART:
-//			cmd_flag = AUTO;
-//			setTimer2(1);
-//			break;
-//		case AUTO:
-//			if (timer2_flag == 1){
-//				HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
-//				dht20_output();
-//				setTimer2(300);
-//			}
-//			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, SET);
-//			break;
-//		case isCAP:
-//			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
-//			setTimer3(1000);
-//			cmd_flag = WAIT;
-//			break;
-//		case WAIT:
-//			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
-//			if (timer3_flag == 1) cmd_flag = INIT_UART;
-//			break;
-//		case isRST:
-//			cmd_flag = INIT_UART;
-//			break;
-//		default:
-//			break;
-//	}
-//}
 
 void Scan_Addr() {
     char info[] = "\r\n\r\nScanning I2C bus...\r\n";

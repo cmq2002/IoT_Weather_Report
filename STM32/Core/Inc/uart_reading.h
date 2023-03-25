@@ -15,6 +15,7 @@
 #include "i2c-lcd.h"
 #include "software_timer.h"
 #include "scheduler.h"
+#include "led_display.h"
 
 #define INIT_UART 0
 

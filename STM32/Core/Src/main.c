@@ -77,7 +77,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 	}
 }
 
-void intercep_UartCmd (void){
+void intercep_UartCmd(){
 	  if (buffer_flag == 1){
 		  cmd_parser_fsm();
 		  buffer_flag = 0;
@@ -131,28 +131,29 @@ int main(void)
   lcd_greeting();
   //Initialization for DHT-20
   dht20_init();
-//  setTimer1(300);
+  setTimer1(300);
   //Add task into scheduler dispatcher
-  SCH_Add_Task(intercep_UartCmd(), 0, 1);
-  SCH_Add_Task(uart_control_fsm(), 300, 1);
+//  SCH_Add_Task(intercep_UartCmd, 0, 1);
+//  SCH_Add_Task(uart_control_fsm, 100, 1);
   while (1)
   {
 	  //Using timer to synchronize
-//	  if (buffer_flag == 1){
-//		  cmd_parser_fsm();
-//		  buffer_flag = 0;
-//	  }
-//	  if(timer1_flag == 1){
-//		  setTimer1(1);
-//		  uart_control_fsm();
-//	  }
+	  if (buffer_flag == 1){
+		  cmd_parser_fsm();
+		  buffer_flag = 0;
+	  }
+	  if(timer1_flag == 1){
+		  setTimer1(1);
+		  uart_control_fsm();
+	  }
 
 	  //Using scheduler dispatcher to synchronize
-	  SCH_Dispatch_Tasks();
+//	  SCH_Dispatch_Tasks();
 
 	  //Testing hardware
-//	  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+//	  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
 //	  HAL_Delay(1000);
+//	  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, SET);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

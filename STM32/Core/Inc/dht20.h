@@ -17,14 +17,14 @@
 extern uint16_t value_x10[2];
 extern char temp[20],humid[20];
 
-void dht20_init(void);
+void dht20_init();
 
 void dht20_reset(uint8_t);
 
 void dht20_read(uint16_t*);
 
-void dht20_start(void);
+void dht20_start();
 
-void dht20_output(void);
+void dht20_output();
 
 #endif /* INC_DHT20_H_ */

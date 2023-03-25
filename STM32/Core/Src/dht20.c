@@ -14,7 +14,7 @@ extern UART_HandleTypeDef huart2;
 uint16_t value_x10[2] = {0, 0};
 char temp[20], humid[20];
 
-void dht20_init(void){
+void dht20_init(){
 	//Set register when call a wrong reset
 	uint8_t init[3];
 
@@ -50,7 +50,7 @@ void dht20_reset(uint8_t regist){
 	HAL_I2C_Master_Transmit(&hi2c1, SLAVE_ADDRESS_DHT20, (uint8_t*) reset, 3, 0xFF);
 }
 
-void dht20_start(void){
+void dht20_start(){
 	//query the DHT20
 	uint8_t status[1];
 	HAL_I2C_Master_Receive(&hi2c1, SLAVE_ADDRESS_DHT20 | 0x01, (uint8_t*) status, 1, 0xFF);
@@ -97,16 +97,15 @@ void dht20_read(uint16_t* value){
 
 }
 
-void dht20_output(void){
+void dht20_output(){
 	dht20_read(value_x10);
 	char msg[64];
 	//11011111 is degree character (manual)
-	sprintf(temp, "Temp:  %d.%d %cC",value_x10[1]/10,value_x10[1]%10 ,0b11011111);
+	sprintf(temp, "TEMP:  %d.%d %cC",value_x10[1]/10,value_x10[1]%10 ,0b11011111);
 	sprintf(msg, "!TEMP:%d.%d#",value_x10[1]/10,value_x10[1]%10);
 	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
-	sprintf(humid,"Humid: %01d.%d %%   ",value_x10[0]/10,value_x10[0]%10);
+	sprintf(humid,"HUMID: %01d.%d %%   ",value_x10[0]/10,value_x10[0]%10);
 	sprintf(msg, "!HUMID:%01d.%d#",value_x10[0]/10,value_x10[0]%10);
 	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
-	setTimer1(300);
 	lcd_show_value();
 }

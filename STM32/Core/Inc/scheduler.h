@@ -16,7 +16,6 @@ typedef struct{
 	uint32_t 	Delay;
 	uint32_t 	Period;
 	uint8_t 	RunMe;
-
 	uint32_t 	TaskID;
 }sTasks;
 

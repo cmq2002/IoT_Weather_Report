@@ -3,9 +3,10 @@ import time
 from Adafruit_IO import MQTTClient
 from uart import *
 
+clientInfo = open("./client_info.txt", "r")
 AIO_FEED_IDs = ["button1", "button2", "sensor1", "sensor2", "sensor3"]
-# AIO_USERNAME = "quang_cao2002"
-# AIO_KEY = "aio_mwrr53yAXvfB6M9ypALKaEuFAEOD"
+AIO_USERNAME = clientInfo.readline().strip()
+AIO_KEY = clientInfo.readline().strip()
 
 def connected(client):
     print("Connected ...")
@@ -40,13 +41,9 @@ client.on_subscribe = subscribe
 client.connect()
 client.loop_background()
 
-counter = 20
 while True:
     #Read data from sensor
-    counter -= 1
-    if (counter <= 0):
-        counter = 20
-        readSerial(client)
+    readSerial(client)
 
     #Send cmd from sever to devices
     #Implement in function message

@@ -10,8 +10,8 @@
 
 #include "main.h"
 
-void turnLedOn(void);
-void turnLedOff(void);
-void toggleLed(void);
+void turnLedOn();
+void turnLedOff();
+void toggleLed();
 
 #endif /* INC_LED_DISPLAY_H_ */

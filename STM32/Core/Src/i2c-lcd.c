@@ -32,7 +32,7 @@ void lcd_send_data (char data)
 	HAL_I2C_Master_Transmit (&hi2c1, SLAVE_ADDRESS_LCD,(uint8_t *) data_t, 4, 100);
 }
 
-void lcd_init (void)
+void lcd_init ()
 {
 	lcd_send_cmd (0x33);
 	lcd_send_cmd (0x32);
@@ -55,7 +55,7 @@ void lcd_send_string (char *str)
 	while (*str) lcd_send_data (*str++);
 }
 
-void lcd_clear_display (void)
+void lcd_clear_display ()
 {
 	lcd_send_cmd (0x01); //clear display
 }
@@ -74,14 +74,14 @@ void lcd_goto_XY (int row, int col)
 	lcd_send_cmd(pos_Addr);
 }
 
-void lcd_greeting (void){
+void lcd_greeting (){
 	  lcd_goto_XY(0, 0);
 	  lcd_send_string("System Boot Done");
 	  lcd_goto_XY(1, 0);
 	  lcd_send_string("Waiting...");
 }
 
-void lcd_show_value(void){
+void lcd_show_value(){
 	  lcd_goto_XY(0, 0);
 	  lcd_send_string(humid);
 	  lcd_goto_XY(1, 0);
