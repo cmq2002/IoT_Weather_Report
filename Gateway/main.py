@@ -1,7 +1,7 @@
-import time
 from connectServer import*
+import time
 
-time.sleep(5)
+time.sleep(WAIT)
 
 state = STARTUP
 connection_attemp = 0
@@ -13,7 +13,7 @@ while True:
             if (counter == TIMEOUT):
                 print("Connection Attemps: " + str(connection_attemp + 1))
                 state = openUART(client)
-            if (state == DISCONNECTED or state == STARTUP):
+            if (state == DISCONNECTED):
                 counter -= 1
                 if (counter <=0):
                     connection_attemp += 1
@@ -25,7 +25,7 @@ while True:
         if connection_attemp == MAX_CONNECTION_ATTEMP:
             print("Reach Max Attemp...")
             client.publish("error-detect", "Reach Max Attemp...")
-            sys.exit(1)
+            disconnected(client)
 
     #Read data from sensor
     if (state == CONNECTED):
@@ -33,5 +33,4 @@ while True:
 
     #Send cmd from sever to devices
     #Implement in function message
-    
     pass

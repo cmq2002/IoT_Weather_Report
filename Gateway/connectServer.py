@@ -8,8 +8,6 @@ AIO_USERNAME = clientInfo.readline().strip()
 AIO_KEY = clientInfo.readline().strip()
 
 def connected(client):
-    global isServerConnected
-    print("Connected...")
     for feed in AIO_FEED_IDs:
         client.subscribe(feed)
     
@@ -38,5 +36,9 @@ client.on_connect = connected
 client.on_disconnect = disconnected
 client.on_message = message
 client.on_subscribe = subscribe
-client.connect()
+try: 
+    client.connect()
+except:
+    print("Internet Connection Loss...")
+    sys.exit(1)
 client.loop_background()

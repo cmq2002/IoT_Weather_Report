@@ -5,8 +5,7 @@ CONNECTED = 1
 DISCONNECTED = 2
 MAX_CONNECTION_ATTEMP = 3
 TIMEOUT = 3
-
-global state
+WAIT = 5
 
 def getPort():
     ports = serial.tools.list_ports.comports()
@@ -21,16 +20,21 @@ def getPort():
     return commPort
 
 def openUART(client):
-    global state, ser
+    global ser
     if getPort() != "None":
-        ser = serial.Serial(port=getPort(), baudrate=9600)
-        client.publish("error-detect","UART Connection Successful...")
+        try:
+            ser = serial.Serial(port=getPort(), baudrate=9600)
+        except:
+            print("UART Connection Loss...")
+            client.publish("error-detect","UART Connection Loss...")
+            return DISCONNECTED
         print("UART Connection Successful...")
         print(ser)
+        client.publish("error-detect","UART Connection Successful...")
         return CONNECTED
     else:
-        client.publish("error-detect","UART Connection Loss...")
         print("UART Connection Loss...")
+        client.publish("error-detect","UART Connection Loss...")
         return DISCONNECTED
 
 def processData(client, data):
@@ -51,6 +55,8 @@ def readSerial(client):
     try:
         bytesToRead = ser.inWaiting()
     except:
+        print("UART Connection Loss...")
+        client.publish("error-detect","UART Connection Loss...")
         return DISCONNECTED
     if (bytesToRead > 0):
         global mess
@@ -64,6 +70,7 @@ def readSerial(client):
             else:
                 mess = mess[end+1:]
     return CONNECTED
+
 
 def writeData(data):
     ser.write(str(data).encode())
