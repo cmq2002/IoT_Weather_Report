@@ -1,51 +1,37 @@
-import sys
 import time
-from Adafruit_IO import MQTTClient
-from uart import *
+from connectServer import*
 
-clientInfo = open("./client_info.txt", "r")
-AIO_FEED_IDs = ["button1", "button2", "sensor1", "sensor2", "sensor3"]
-AIO_USERNAME = clientInfo.readline().strip()
-AIO_KEY = clientInfo.readline().strip()
+time.sleep(5)
 
-def connected(client):
-    print("Connected ...")
-    for feed in AIO_FEED_IDs:
-        client.subscribe(feed)
-    
-def subscribe(client , userdata , mid , granted_qos):
-    print("Subscribed ...")
-
-def disconnected(client):
-    print("Disconnected ...")
-    sys.exit (1)
-
-def message(client , feed_id , payload):
-    # print("Value Received: " + payload + ", FeedID: " + feed_id)
-    if feed_id == "button1":
-        if payload == "0":
-            writeData(1)
-        else:
-            writeData(2)
-    if feed_id == "button2":
-        if payload == "0":
-            writeData(3)
-        else:
-            writeData(4)
-
-client = MQTTClient(AIO_USERNAME , AIO_KEY)
-client.on_connect = connected
-client.on_disconnect = disconnected
-client.on_message = message
-client.on_subscribe = subscribe
-client.connect()
-client.loop_background()
-
+state = STARTUP
+connection_attemp = 0
+counter = TIMEOUT
 while True:
+    #1-hop error control: Confirm UART connection
+    if (state == DISCONNECTED or state == STARTUP):
+        while(connection_attemp < MAX_CONNECTION_ATTEMP and state != CONNECTED):
+            if (counter == TIMEOUT):
+                print("Connection Attemps: " + str(connection_attemp + 1))
+                state = openUART(client)
+            if (state == DISCONNECTED or state == STARTUP):
+                counter -= 1
+                if (counter <=0):
+                    connection_attemp += 1
+                    counter = TIMEOUT
+                time.sleep(1)
+            else:
+                connection_attemp = 0
+
+        if connection_attemp == MAX_CONNECTION_ATTEMP:
+            print("Reach Max Attemp...")
+            client.publish("error-detect", "Reach Max Attemp...")
+            sys.exit(1)
+
     #Read data from sensor
-    readSerial(client)
+    if (state == CONNECTED):
+        state = readSerial(client)
 
     #Send cmd from sever to devices
     #Implement in function message
-    time.sleep(1)
+    
     pass
