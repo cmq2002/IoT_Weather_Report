@@ -1,4 +1,9 @@
-
+/*
+ * i2c-lcd.c
+ *
+ *  Created on: Dec 22, 2022
+ *      Author: acer
+ */
 
 #include "i2c-lcd.h"
 extern I2C_HandleTypeDef hi2c1;  // change your handler here accordingly

@@ -5,7 +5,11 @@ CONNECTED = 1
 DISCONNECTED = 2
 MAX_CONNECTION_ATTEMP = 3
 TIMEOUT = 3
-WAIT = 5
+HALT_TIME = 5
+TEMP_LOWERBOUND = 5
+TEMP_UPPERBOUND = 42
+HUMID_LOWERBOUND = 10
+HUMID_UPPERBOUND = 92
 
 def getPort():
     ports = serial.tools.list_ports.comports()
@@ -44,12 +48,12 @@ def processData(client, data):
     print(splitData)
     try:
         if splitData[0] == "TEMP":
-            if (splitData[1] >= 5 and splitData[1] <= 42):
+            if (splitData[1] >= TEMP_LOWERBOUND and splitData[1] <= TEMP_UPPERBOUND):
                 client.publish("sensor1", splitData[1])
             else:
                 client.publish("error-detect", "Warning: Unexpected Temp Value...")
         elif splitData[0] == "HUMID":
-            if (splitData[1] >= 10 and splitData[1] <= 92):
+            if (splitData[1] >= HUMID_LOWERBOUND and splitData[1] <= HUMID_UPPERBOUND):
                 client.publish("sensor2", splitData[1])
             else:
                 client.publish("error-detect", "Warning: Unexpected Humid Value...")

@@ -1,9 +1,10 @@
 /*
- * dht20.c
+ * dht_20.c
  *
- *  Created on: Dec 21, 2022
- *      Author: LeHungVjpPro
+ *  Created on: Dec 22, 2022
+ *      Author: acer
  */
+
 #include "dht20.h"
 
 extern I2C_HandleTypeDef hi2c1;

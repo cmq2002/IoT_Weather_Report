@@ -1,5 +1,5 @@
 from Adafruit_IO import MQTTClient
-from uart import *
+from uart import writeData
 import sys
 
 clientInfo = open("./client_info.txt", "r")

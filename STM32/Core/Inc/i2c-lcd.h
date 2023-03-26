@@ -1,4 +1,9 @@
-
+/*
+ * i2c-lcd.h
+ *
+ *  Created on: Dec 22, 2022
+ *      Author: acer
+ */
 #ifndef INC_LCD_H_
 #define INC_LCD_H_
 

@@ -1,7 +1,8 @@
 from connectServer import*
+from uart import*
 import time
 
-time.sleep(WAIT)
+time.sleep(HALT_TIME)
 
 state = STARTUP
 connection_attemp = 0
