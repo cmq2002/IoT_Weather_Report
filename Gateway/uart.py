@@ -44,9 +44,15 @@ def processData(client, data):
     print(splitData)
     try:
         if splitData[0] == "TEMP":
-            client.publish("sensor1", splitData[1])
+            if (splitData[1] >= 5 and splitData[1] <= 42):
+                client.publish("sensor1", splitData[1])
+            else:
+                client.publish("error-detect", "Warning: Unexpected Temp Value...")
         elif splitData[0] == "HUMID":
-            client.publish("sensor2", splitData[1])
+            if (splitData[1] >= 10 and splitData[1] <= 92):
+                client.publish("sensor2", splitData[1])
+            else:
+                client.publish("error-detect", "Warning: Unexpected Humid Value...")
     except:
         pass
 
