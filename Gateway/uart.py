@@ -48,12 +48,12 @@ def processData(client, data):
     print(splitData)
     try:
         if splitData[0] == "TEMP":
-            if (splitData[1] >= TEMP_LOWERBOUND and splitData[1] <= TEMP_UPPERBOUND):
+            if (float(splitData[1]) >= TEMP_LOWERBOUND and float(splitData[1]) <= TEMP_UPPERBOUND):
                 client.publish("sensor1", splitData[1])
             else:
                 client.publish("error-detect", "Warning: Unexpected Temp Value...")
         elif splitData[0] == "HUMID":
-            if (splitData[1] >= HUMID_LOWERBOUND and splitData[1] <= HUMID_UPPERBOUND):
+            if (float(splitData[1]) >= HUMID_LOWERBOUND and float(splitData[1]) <= HUMID_UPPERBOUND):
                 client.publish("sensor2", splitData[1])
             else:
                 client.publish("error-detect", "Warning: Unexpected Humid Value...")
