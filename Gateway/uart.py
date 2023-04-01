@@ -1,8 +1,6 @@
-from connectServer import* 
 import serial.tools.list_ports
 import time
 import sys
-
 
 STARTUP = 0
 CONNECTED = 1
@@ -86,6 +84,8 @@ def processData(client, data):
                 client.publish("sensor2", splitData[1])
             else:
                 client.publish("error-detect", "Warning: Unexpected Humid Value...")
+        elif splitData[0] == "ERROR":
+            client.publish("error-detect", splitData[1])
     except:
         pass
 
@@ -110,11 +110,11 @@ def readSerial(client):
                 mess = mess[end+1:]
     return CONNECTED
 
-
-def writeData(data):
-    ser.write(str(data).encode())
-
 def startMeasure(client):
     global state
     if (state == CONNECTED):
         state = readSerial(client)
+
+def writeData(data):
+    ser.write(str(data).encode())
+

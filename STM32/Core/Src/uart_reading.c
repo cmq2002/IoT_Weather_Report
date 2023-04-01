@@ -139,9 +139,11 @@ void Scan_Addr() {
     HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), HAL_MAX_DELAY);
 
     HAL_StatusTypeDef res;
+    uint8_t device_counter = 0;
     for(uint16_t i = 0; i < 128; i++) {
         res = HAL_I2C_IsDeviceReady(&hi2c1, i << 1, 1, 10);
         if(res == HAL_OK) {
+        	device_counter += 1;
             char msg[64];
             snprintf(msg, sizeof(msg), "0x%02X", i);
             HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
@@ -149,6 +151,12 @@ void Scan_Addr() {
         else {
             HAL_UART_Transmit(&huart2, (uint8_t*)".", 1, HAL_MAX_DELAY);
         }
+    }
+
+    if (device_counter == 0){
+    	char msg[64];
+    	sprintf(msg, "!ERROR:Sensor Not Found...#");
+    	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
     }
 }
 

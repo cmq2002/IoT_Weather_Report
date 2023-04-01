@@ -1,9 +1,10 @@
 from Adafruit_IO import MQTTClient
-from uart import*
+from uart import *
+from log import *
 import sys
 
 clientInfo = open("./client_info.txt", "r")
-AIO_FEED_IDs = ["button1", "button2", "sensor1", "sensor2", "error-detect"]
+AIO_FEED_IDs = ["button1", "button2", "sensor1", "sensor2", "sending_freq", "error-detect"]
 AIO_USERNAME = clientInfo.readline().strip()
 AIO_KEY = clientInfo.readline().strip()
 
@@ -19,7 +20,7 @@ def disconnected(client):
     sys.exit (1)
 
 def message(client , feed_id , payload):
-    # print("Value Received: " + payload + ", FeedID: " + feed_id)
+    global proc_delay 
     if feed_id == "button1":
         if payload == "0":
             writeData(1)

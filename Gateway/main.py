@@ -1,5 +1,4 @@
 from connectServer import*
-from uart import*
 
 time.sleep(HALT_TIME)
 
