@@ -1,10 +1,10 @@
 from Adafruit_IO import MQTTClient
-from uart import *
-from log import *
+import uart
+import log
 import sys
 
 clientInfo = open("./client_info.txt", "r")
-AIO_FEED_IDs = ["button1", "button2", "sensor1", "sensor2", "sending_freq", "error-detect"]
+AIO_FEED_IDs = ["button1", "button2", "sensor1", "sensor2", "mcu-info", "sending_freq", "error-detect"]
 AIO_USERNAME = clientInfo.readline().strip()
 AIO_KEY = clientInfo.readline().strip()
 
@@ -20,17 +20,28 @@ def disconnected(client):
     sys.exit (1)
 
 def message(client , feed_id , payload):
-    global proc_delay 
     if feed_id == "button1":
         if payload == "0":
-            writeData(1)
+            uart.writeData("!OFF1#")
         else:
-            writeData(2)
+            uart.writeData("!ON1#")
     if feed_id == "button2":
         if payload == "0":
-            writeData(3)
+            uart.writeData("!OFF2#")
         else:
-            writeData(4)
+            uart.writeData("!ON2#")
+    if feed_id == "sending_freq":
+        data = payload.replace("!", "")
+        data = payload.replace("#", "")
+        splitData = data.split(":")
+        if (splitData[0] == "!FREQ"):
+            if (len(splitData[1]) == 1): 
+                return
+            else:
+                print("New Operating Frequency: " + splitData[1])
+                uart.setProcDelay(int(splitData[1]))
+        else:
+            return
 
 client = MQTTClient(AIO_USERNAME , AIO_KEY)
 client.on_connect = connected
@@ -41,5 +52,6 @@ try:
     client.connect()
 except:
     print("Internet Connection Loss...")
+    log.writelog("Internet Connection Loss...")
     sys.exit(1)
 client.loop_background()

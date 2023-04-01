@@ -154,9 +154,11 @@ void Scan_Addr() {
     }
 
     if (device_counter == 0){
-    	char msg[64];
-    	sprintf(msg, "!ERROR:Sensor Not Found...#");
+    	char msg[] = "!ERROR:Sensor Not Found...#";
     	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
     }
+
+    char mcu_info[] = "";
+    HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), HAL_MAX_DELAY);
 }
 

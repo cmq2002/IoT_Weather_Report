@@ -7,11 +7,13 @@ CONNECTED = 1
 DISCONNECTED = 2
 MAX_CONNECTION_ATTEMP = 3
 TIMEOUT = 3
-HALT_TIME = 5
+HOLD_TIME_LOCAL = 1
+HOLD_TIME_GLOBAL = 5
 TEMP_LOWERBOUND = 5
 TEMP_UPPERBOUND = 42
 HUMID_LOWERBOUND = 10
 HUMID_UPPERBOUND = 92
+ACTIVE_CYCLE = 10
 
 def getPort():
     ports = serial.tools.list_ports.comports()
@@ -40,7 +42,7 @@ def confirmUART(client):
                 if (counter <=0):
                     connection_attemp += 1
                     counter = TIMEOUT
-                time.sleep(1)
+                time.sleep(HOLD_TIME_LOCAL)
             else:
                 connection_attemp = 0
 
@@ -110,10 +112,23 @@ def readSerial(client):
                 mess = mess[end+1:]
     return CONNECTED
 
+proc_delay = ACTIVE_CYCLE
+delay_counter = proc_delay
 def startMeasure(client):
-    global state
+    global state, proc_delay, delay_counter
     if (state == CONNECTED):
-        state = readSerial(client)
+        print(delay_counter)
+        delay_counter -= 1
+        if (delay_counter <= 0): 
+            delay_counter = proc_delay
+            state = readSerial(client)
+        time.sleep(HOLD_TIME_LOCAL)
+
+def setProcDelay(new_delay):
+    global proc_delay, delay_counter
+    if (new_delay < 5): new_delay = 5
+    proc_delay = new_delay
+    delay_counter = new_delay
 
 def writeData(data):
     ser.write(str(data).encode())

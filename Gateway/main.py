@@ -1,8 +1,7 @@
 from connectServer import*
+from uart import *
 
-time.sleep(HALT_TIME)
-
-
+time.sleep(HOLD_TIME_GLOBAL)
 while True:
     # Confirm UART connection
     confirmUART(client)
@@ -10,5 +9,4 @@ while True:
     #Read data from sensor
     startMeasure(client)
 
-    #Send cmd from sever to devices
     pass
