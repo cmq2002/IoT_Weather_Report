@@ -1,4 +1,8 @@
+from connectServer import* 
 import serial.tools.list_ports
+import time
+import sys
+
 
 STARTUP = 0
 CONNECTED = 1
@@ -22,6 +26,31 @@ def getPort():
             splitPort = strPort.split(" ")
             commPort = (splitPort[0])
     return commPort
+
+state = STARTUP
+connection_attemp = 0
+counter = TIMEOUT
+def confirmUART(client):
+    global state, connection_attemp, counter
+    if (state == DISCONNECTED or state == STARTUP):
+        while(connection_attemp < MAX_CONNECTION_ATTEMP and state != CONNECTED):
+            if (counter == TIMEOUT):
+                print("Connection Attemps: " + str(connection_attemp + 1))
+                state = openUART(client)
+            if (state == DISCONNECTED):
+                counter -= 1
+                if (counter <=0):
+                    connection_attemp += 1
+                    counter = TIMEOUT
+                time.sleep(1)
+            else:
+                connection_attemp = 0
+
+        if connection_attemp == MAX_CONNECTION_ATTEMP:
+            print("Reach Max Attemp...")
+            client.publish("error-detect", "Reach Max Attemp...")
+            print("Disconnected...")
+            sys.exit (1)
 
 def openUART(client):
     global ser
@@ -84,3 +113,8 @@ def readSerial(client):
 
 def writeData(data):
     ser.write(str(data).encode())
+
+def startMeasure(client):
+    global state
+    if (state == CONNECTED):
+        state = readSerial(client)

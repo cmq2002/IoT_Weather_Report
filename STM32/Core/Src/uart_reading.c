@@ -145,7 +145,8 @@ void Scan_Addr() {
             char msg[64];
             snprintf(msg, sizeof(msg), "0x%02X", i);
             HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
-        } else {
+        }
+        else {
             HAL_UART_Transmit(&huart2, (uint8_t*)".", 1, HAL_MAX_DELAY);
         }
     }

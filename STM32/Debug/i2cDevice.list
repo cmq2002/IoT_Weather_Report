@@ -37,11 +37,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  16 .debug_macro  00019243  00000000  00000000  000342e0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   000131ab  00000000  00000000  0004d523  2**0
+ 17 .debug_line   000131ac  00000000  00000000  0004d523  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0008d281  00000000  00000000  000606ce  2**0
+ 18 .debug_str    0008d281  00000000  00000000  000606cf  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000050  00000000  00000000  000ed94f  2**0
+ 19 .comment      00000050  00000000  00000000  000ed950  2**0
                   CONTENTS, READONLY
  20 .debug_frame  00004928  00000000  00000000  000ed9a0  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
@@ -2909,7 +2909,8 @@ void Scan_Addr() {
  80011be:	480d      	ldr	r0, [pc, #52]	; (80011f4 <Scan_Addr+0xb4>)
  80011c0:	f002 fd83 	bl	8003cca <HAL_UART_Transmit>
  80011c4:	e006      	b.n	80011d4 <Scan_Addr+0x94>
-        } else {
+        }
+        else {
             HAL_UART_Transmit(&huart2, (uint8_t*)".", 1, HAL_MAX_DELAY);
  80011c6:	f04f 33ff 	mov.w	r3, #4294967295
  80011ca:	2201      	movs	r2, #1
