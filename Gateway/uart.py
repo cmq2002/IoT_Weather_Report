@@ -14,6 +14,8 @@ TEMP_UPPERBOUND = 42
 HUMID_LOWERBOUND = 10
 HUMID_UPPERBOUND = 92
 ACTIVE_CYCLE = 10
+NUM_DATA_ELEMENTS = 2
+ENDING_BYTE = "#"
 
 def getPort():
     ports = serial.tools.list_ports.comports()
@@ -70,28 +72,53 @@ def openUART(client):
         client.publish("error-detect","UART Connection Loss...")
         return DISCONNECTED
 
-def processData(client, data):
-    data = data.replace("!", "")
-    data = data.replace("#", "")
+def confirmDataIntegrity(data):
     splitData = data.split(":")
     print(splitData)
-    try:
-        if splitData[0] == "TEMP":
-            if (float(splitData[1]) >= TEMP_LOWERBOUND and float(splitData[1]) <= TEMP_UPPERBOUND):
-                client.publish("sensor1", splitData[1])
-            else:
-                client.publish("error-detect", "Warning: Unexpected Temp Value...")
-        elif splitData[0] == "HUMID":
-            if (float(splitData[1]) >= HUMID_LOWERBOUND and float(splitData[1]) <= HUMID_UPPERBOUND):
-                client.publish("sensor2", splitData[1])
-            else:
-                client.publish("error-detect", "Warning: Unexpected Humid Value...")
-        elif splitData[0] == "ERROR":
-            client.publish("error-detect", splitData[1])
-        elif splitData[0] == "MCU":
-            client.publish("mcu-info", splitData[1])
-    except:
-        pass
+    if (len(splitData) != 3):
+        return 0
+    else:
+        recv_checkSum = int(splitData[len(splitData)-1].replace("#", ""))
+        recalc_checkSum = 0
+        split = 0
+        for i in range(len(data)):
+            if (data[i] == ":"): split += 1
+            if (split == NUM_DATA_ELEMENTS): break
+            recalc_checkSum += ord(data[i])
+        recalc_checkSum += ord(ENDING_BYTE)
+        if (recalc_checkSum == recv_checkSum):
+            return 1
+        else:
+            return 0
+
+def processData(client, data):
+    checkSumRes = confirmDataIntegrity(data)
+    if (checkSumRes == 0):
+        print("Data Integrity Violated...")
+        client.publish("error-detect", "Data Integrity Violated...")
+        return
+    else:
+        data = data.replace("!", "")
+        data = data.replace("#", "")
+        splitData = data.split(":")
+        print(splitData)
+        try:
+            if splitData[0] == "TEMP":
+                if (float(splitData[1]) >= TEMP_LOWERBOUND and float(splitData[1]) <= TEMP_UPPERBOUND):
+                    client.publish("sensor1", splitData[1])
+                else:
+                    client.publish("error-detect", "Warning: Unexpected Temp Value...")
+            elif splitData[0] == "HUMID":
+                if (float(splitData[1]) >= HUMID_LOWERBOUND and float(splitData[1]) <= HUMID_UPPERBOUND):
+                    client.publish("sensor2", splitData[1])
+                else:
+                    client.publish("error-detect", "Warning: Unexpected Humid Value...")
+            elif splitData[0] == "ERROR":
+                client.publish("error-detect", splitData[1])
+            elif splitData[0] == "MCU":
+                client.publish("mcu-info", splitData[1])
+        except:
+            pass
 
 mess = ""
 def readSerial(client):
