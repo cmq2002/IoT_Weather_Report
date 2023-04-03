@@ -101,12 +101,17 @@ void dht20_read(uint16_t* value){
 void dht20_output(){
 	dht20_read(value_x10);
 	char msg[64];
-	//11011111 is degree character (manual)
+	uint32_t checkSum = 0;
+	//Checksum temp and publish
+	checkSum = msgCheckSum(&msg[0], sprintf(msg, "!TEMP:%d.%d#",value_x10[1]/10,value_x10[1]%10));
+	sprintf(msg, "!TEMP:%d.%d:%lu#",value_x10[1]/10,value_x10[1]%10,checkSum);
+	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
+	//Checksum humid and publish
+	checkSum = msgCheckSum(&msg[0], sprintf(msg, "!HUMID:%01d.%d#",value_x10[0]/10,value_x10[0]%10));
+	sprintf(msg, "!HUMID:%01d.%d:%lu#",value_x10[0]/10,value_x10[0]%10,checkSum);
+	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
+	//Display on the LCD
 	sprintf(temp, "TEMP:  %d.%d %cC",value_x10[1]/10,value_x10[1]%10 ,0b11011111);
-	sprintf(msg, "!TEMP:%d.%d#",value_x10[1]/10,value_x10[1]%10);
-	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
 	sprintf(humid,"HUMID: %01d.%d %%   ",value_x10[0]/10,value_x10[0]%10);
-	sprintf(msg, "!HUMID:%01d.%d#",value_x10[0]/10,value_x10[0]%10);
-	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
 	lcd_show_value();
 }

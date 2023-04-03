@@ -134,6 +134,14 @@ void uart_control_fsm()
 	}
 }
 
+uint32_t msgCheckSum(char* msg, uint32_t msgLen){
+	uint32_t result = 0;
+	for(int i=0; i<msgLen; i++){
+		result += msg[i];
+	}
+	return result;
+}
+
 void Scan_Addr() {
     char info[] = "\r\n\r\nScanning I2C bus...\r\n";
     HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), HAL_MAX_DELAY);
@@ -154,11 +162,16 @@ void Scan_Addr() {
     }
 
     if (device_counter == 0){
-    	char msg[] = "!ERROR:Sensor Not Found...#";
+    	char msg[64] = "!ERROR:Sensor Not Found...#";
+    	uint32_t checkSum = msgCheckSum(&msg[0], strlen(msg));
+    	sprintf(msg, "!ERROR:Sensor Not Found...:%lu#", checkSum);
     	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
     }
-
-    char mcu_info[] = "";
-    HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), HAL_MAX_DELAY);
 }
 
+void Mcu_info(){
+	char msg[64];
+	uint32_t checkSum = msgCheckSum(&msg[0], sprintf(msg, "!INFO:MCU_VERSION-%s,FIRWARE_VERSION-%s#", MCU_VERSION, FIRMWARE_VERSION));
+	sprintf(msg, "!INFO:MCU_VERSION-%s,FIRWARE_VERSION-%s:%lu#", MCU_VERSION, FIRMWARE_VERSION, checkSum);
+	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
+}

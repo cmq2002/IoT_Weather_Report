@@ -12,6 +12,7 @@
 #include <string.h>
 #include "main.h"
 #include "i2c-lcd.h"
+#include "uart_reading.h"
 #include "software_timer.h"
 
 extern uint16_t value_x10[2];

@@ -26,7 +26,8 @@ Core/Src/i2c-lcd.o: ../Core/Src/i2c-lcd.c ../Core/Inc/i2c-lcd.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
  ../Core/Inc/dht20.h ../Core/Inc/main.h ../Core/Inc/i2c-lcd.h \
- ../Core/Inc/software_timer.h
+ ../Core/Inc/uart_reading.h ../Core/Inc/software_timer.h \
+ ../Core/Inc/scheduler.h ../Core/Inc/led_display.h
 ../Core/Inc/i2c-lcd.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
@@ -57,4 +58,7 @@ Core/Src/i2c-lcd.o: ../Core/Src/i2c-lcd.c ../Core/Inc/i2c-lcd.h \
 ../Core/Inc/dht20.h:
 ../Core/Inc/main.h:
 ../Core/Inc/i2c-lcd.h:
+../Core/Inc/uart_reading.h:
 ../Core/Inc/software_timer.h:
+../Core/Inc/scheduler.h:
+../Core/Inc/led_display.h:

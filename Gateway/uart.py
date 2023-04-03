@@ -88,6 +88,8 @@ def processData(client, data):
                 client.publish("error-detect", "Warning: Unexpected Humid Value...")
         elif splitData[0] == "ERROR":
             client.publish("error-detect", splitData[1])
+        elif splitData[0] == "MCU":
+            client.publish("mcu-info", splitData[1])
     except:
         pass
 

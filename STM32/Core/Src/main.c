@@ -125,6 +125,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   //Scan the address of I2C device
   Scan_Addr();
+  //MCU & FIRWARE Info
+  Mcu_info();
   //Initialization for LCD
   lcd_clear_display();
   lcd_init();

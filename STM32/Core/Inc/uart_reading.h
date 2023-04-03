@@ -17,6 +17,10 @@
 #include "scheduler.h"
 #include "led_display.h"
 
+#define MCU_VERSION "STM32F103RBT6"
+
+#define FIRMWARE_VERSION "2.0"
+
 #define INIT_UART 0
 
 #define READING 1
@@ -47,5 +51,9 @@ void uart_control_fsm();
 void counter10s();
 
 void Scan_Addr();
+
+void Mcu_info();
+
+uint32_t msgCheckSum(char* msg, uint32_t msgLen);
 
 #endif /* INC_UART_READING_H_ */
