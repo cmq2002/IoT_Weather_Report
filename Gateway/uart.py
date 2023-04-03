@@ -74,7 +74,6 @@ def openUART(client):
 
 def confirmDataIntegrity(data):
     splitData = data.split(":")
-    print(splitData)
     if (len(splitData) != 3):
         return 0
     else:
