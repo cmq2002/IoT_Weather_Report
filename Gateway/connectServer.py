@@ -22,26 +22,29 @@ def disconnected(client):
 def message(client , feed_id , payload):
     if feed_id == "button1":
         if payload == "0":
-            uart.writeData("!OFF1#")
+            uart.writeData("@OFF1*")
         else:
-            uart.writeData("!ON1#")
+            uart.writeData("@ON1*")
     if feed_id == "button2":
         if payload == "0":
-            uart.writeData("!OFF2#")
+            uart.writeData("@OFF2*")
         else:
-            uart.writeData("!ON2#")
+            uart.writeData("@ON2*")
     if feed_id == "sending_freq":
-        data = payload.replace("!", "")
-        data = payload.replace("#", "")
-        splitData = data.split(":")
-        if (splitData[0] == "!FREQ"):
-            if (len(splitData[1]) == 1): 
-                return
-            else:
-                print("New Operating Frequency: " + splitData[1])
-                uart.setProcDelay(int(splitData[1]))
-        else:
-            return
+        print("New Operating Frequency: " + payload)
+        uart.setProcDelay(int(payload))
+        # uart.writeData("@FREQ:")
+        # data = payload.replace("!", "")
+        # data = payload.replace("#", "")
+        # splitData = data.split(":")
+        # if (splitData[0] == "!FREQ"):
+        #     if (len(splitData[1]) == 1): 
+        #         return
+        #     else:
+        #         print("New Operating Frequency: " + splitData[1])
+        #         uart.setProcDelay(int(splitData[1]))
+        # else:
+        #     return
 
 client = MQTTClient(AIO_USERNAME , AIO_KEY)
 client.on_connect = connected

@@ -2,9 +2,9 @@
 ../Core/Src/uart_reading.c:33:6:rst_cmd	16	static
 ../Core/Src/uart_reading.c:38:6:cleanUp	8	static
 ../Core/Src/uart_reading.c:46:6:cmd_parser_fsm	8	static
-../Core/Src/uart_reading.c:77:6:counter10s	4	static
-../Core/Src/uart_reading.c:81:6:groupAction	8	static
-../Core/Src/uart_reading.c:111:6:uart_control_fsm	8	static
-../Core/Src/uart_reading.c:143:10:msgCheckSum	24	static
-../Core/Src/uart_reading.c:151:6:Scan_Addr	120	static
-../Core/Src/uart_reading.c:178:6:Mcu_info	88	static
+../Core/Src/uart_reading.c:65:6:counter10s	4	static
+../Core/Src/uart_reading.c:69:6:groupAction	8	static
+../Core/Src/uart_reading.c:99:6:uart_control_fsm	8	static
+../Core/Src/uart_reading.c:139:10:msgCheckSum	24	static
+../Core/Src/uart_reading.c:147:6:Scan_Addr	120	static
+../Core/Src/uart_reading.c:174:6:Mcu_info	88	static

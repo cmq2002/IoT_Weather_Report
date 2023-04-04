@@ -44,32 +44,20 @@ void cleanUp(){
 }
 
 void cmd_parser_fsm(){
-	switch(cmdParserStatus){
-		case INIT_UART:
-			if (buffer[buffer_idx] == '@'){
-				cmdParserStatus = READING;
-				buffer_idx++;
-			}
-			break;
-		case READING:
-			if (buffer[buffer_idx] != '@' && buffer[buffer_idx] != '*'){
-				cmd_data[cmd_index] = buffer[buffer_idx];
-				cmd_index++;
-				buffer_idx++;
-			}
-			else if (buffer[buffer_idx] == '@'){
-				cmdParserStatus = READING;
-				buffer_idx++;
-			}
-			else if (buffer[buffer_idx] == '*'){
-				if (cmd_data[0] == 'R') cmd_flag = isRST;
-				else if (cmd_data[0] == 'C') cmd_flag = isCAP;
-				cmdParserStatus = INIT_UART;
-				cleanUp();
-			}
-			break;
-		default:
-			break;
+	if (buffer[buffer_idx] == '@'){
+		buffer_idx++;
+	}
+	else if (buffer[buffer_idx] != '@' && buffer[buffer_idx] != '*'){
+		cmd_data[cmd_index] = buffer[buffer_idx];
+		cmd_index++;
+		buffer_idx++;
+	}
+	else if (buffer[buffer_idx] == '*'){
+		if (cmd_data[0] == 'O' && cmd_data[1] == 'N' && cmd_data[2] == '1') cmd_flag = isCAP;
+		else if (cmd_data[0] == 'O' && cmd_data[1] == 'F' && cmd_data[2] == 'F' && cmd_data[3] == '1') cmd_flag = isRST;
+		else if (cmd_data[0] == 'O' && cmd_data[1] == 'N' && cmd_data[2] == '2') cmd_flag = OBLED_ON;
+		else if (cmd_data[0] == 'O' && cmd_data[1] == 'F' && cmd_data[2] == 'F' && cmd_data[3] == '2') cmd_flag = OBLED_OFF;
+		cleanUp();
 	}
 }
 
@@ -124,7 +112,7 @@ void uart_control_fsm()
 			turnLedOff();
 			break;
 		case isCAP:
-			setTimer3(1000);
+			setTimer3(1500);
 			cmd_flag = WAIT;
 			turnLedOn();
 			break;
@@ -133,6 +121,14 @@ void uart_control_fsm()
 			if (timer3_flag == 1) cmd_flag = INIT_UART;
 			break;
 		case isRST:
+			cmd_flag = INIT_UART;
+			break;
+		case OBLED_ON:
+			turnOBLedOn();
+			cmd_flag = INIT_UART;
+			break;
+		case OBLED_OFF:
+			turnOBLedOff();
 			cmd_flag = INIT_UART;
 			break;
 		default:
@@ -150,7 +146,7 @@ uint32_t msgCheckSum(char* msg, uint32_t msgLen){
 
 void Scan_Addr() {
     char info[] = "\r\n\r\nScanning I2C bus...\r\n";
-    HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), HAL_MAX_DELAY);
+    HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 100);
 
     HAL_StatusTypeDef res;
     uint8_t device_counter = 0;
@@ -160,10 +156,10 @@ void Scan_Addr() {
         	device_counter += 1;
             char msg[64];
             snprintf(msg, sizeof(msg), "0x%02X", i);
-            HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
+            HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
         }
         else {
-            HAL_UART_Transmit(&huart2, (uint8_t*)".", 1, HAL_MAX_DELAY);
+            HAL_UART_Transmit(&huart2, (uint8_t*)".", 1, 100);
         }
     }
 
@@ -171,7 +167,7 @@ void Scan_Addr() {
     	char msg[64] = "!ERROR:Sensor Not Found...#";
     	uint32_t checkSum = msgCheckSum(&msg[0], strlen(msg));
     	sprintf(msg, "!ERROR:Sensor Not Found...:%lu#", checkSum);
-    	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
+    	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
     }
 }
 
@@ -179,5 +175,5 @@ void Mcu_info(){
 	char msg[64];
 	uint32_t checkSum = msgCheckSum(&msg[0], sprintf(msg, "!INFO:MCU_VERSION-%s,FIRWARE_VERSION-%s#", MCU_VERSION, FIRMWARE_VERSION));
 	sprintf(msg, "!INFO:MCU VERSION %s, FIRWARE VERSION %s:%lu#", MCU_VERSION, FIRMWARE_VERSION, checkSum);
-	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
+	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
 }

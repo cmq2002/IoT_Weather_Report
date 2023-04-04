@@ -18,3 +18,15 @@ void turnLedOff(){
 void toggleLed(){
 	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 }
+
+void turnOBLedOn(){
+	HAL_GPIO_WritePin(OB_LED_GPIO_Port, OB_LED_Pin, SET);
+}
+
+void turnOBLedOff(){
+	HAL_GPIO_WritePin(OB_LED_GPIO_Port, OB_LED_Pin, RESET);
+}
+
+void toggleOBLed(){
+	HAL_GPIO_TogglePin(OB_LED_GPIO_Port, OB_LED_Pin);
+}

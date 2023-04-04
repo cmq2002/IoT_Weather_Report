@@ -23,17 +23,17 @@
 
 #define INIT_UART 0
 
-#define READING 1
+#define AUTO 1
 
-#define STOP 2
+#define isCAP 2
 
-#define isRST 7
+#define WAIT 3
 
-#define isCAP 8
+#define isRST 4
 
-#define AUTO 9
+#define OBLED_ON 5
 
-#define WAIT 10
+#define OBLED_OFF 6
 
 #define MAX_BUFFER_SIZE 30
 
