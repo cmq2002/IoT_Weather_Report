@@ -19,7 +19,7 @@
 
 #define MCU_VERSION "STM32F103RBT6"
 
-#define FIRMWARE_VERSION "2.0"
+#define FIRMWARE_VERSION "2.1"
 
 #define INIT_UART 0
 
@@ -35,25 +35,27 @@
 
 #define WAIT 10
 
-#define MAX_BUFFER_SIZE 50
+#define MAX_BUFFER_SIZE 30
 
-#define MAX_CMD_SIZE 3
+#define MAX_CMD_SIZE 4
 
 extern uint8_t buffer_byte;
 extern uint8_t buffer[MAX_BUFFER_SIZE];
 extern uint8_t index_buffer;
 extern uint8_t buffer_flag;
 
+void rst_buffer();
+
 void cmd_parser_fsm();
 
 void uart_control_fsm();
 
-void counter10s();
+uint32_t msgCheckSum(char* msg, uint32_t msgLen);
 
 void Scan_Addr();
 
 void Mcu_info();
 
-uint32_t msgCheckSum(char* msg, uint32_t msgLen);
+
 
 #endif /* INC_UART_READING_H_ */

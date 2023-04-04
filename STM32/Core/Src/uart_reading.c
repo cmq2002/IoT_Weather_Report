@@ -21,46 +21,52 @@ uint8_t buffer_flag = 0;
 uint8_t cmdParserStatus = INIT_UART;
 uint8_t cmd_data[MAX_CMD_SIZE];
 uint8_t cmd_index = 0;
+uint8_t buffer_idx = 0;
 uint8_t cmd_flag = INIT_UART;
 uint8_t counter = WAIT;
 
-int isCmdEqualToRST(uint8_t str[]){
-	int flag = 0;
-	if (str[0] == 'R') flag = 1;
-	else flag = 0;
-	return flag;
+void rst_buffer(){
+	for(int i=0; i<MAX_BUFFER_SIZE; i++)
+		buffer[i] = ' ';
 }
 
-int isCmdEqualToCAP(uint8_t str[]){
-	int flag = 0;
-	if (str[0] == 'C') flag = 1;
-	else flag = 0;
-	return flag;
+void rst_cmd(){
+	for(int i=0; i<MAX_CMD_SIZE; i++)
+		cmd_data[i] = ' ';
+}
+
+void cleanUp(){
+	index_buffer = 0;
+	cmd_index = 0;
+	buffer_idx = 0;
+	rst_buffer();
+	rst_cmd();
 }
 
 void cmd_parser_fsm(){
 	switch(cmdParserStatus){
 		case INIT_UART:
-			if (buffer_byte == '!') cmdParserStatus = READING;
+			if (buffer[buffer_idx] == '@'){
+				cmdParserStatus = READING;
+				buffer_idx++;
+			}
 			break;
 		case READING:
-			if (buffer_byte != '!' && buffer_byte != '#'){
-				cmd_data[cmd_index] = buffer_byte;
+			if (buffer[buffer_idx] != '@' && buffer[buffer_idx] != '*'){
+				cmd_data[cmd_index] = buffer[buffer_idx];
 				cmd_index++;
+				buffer_idx++;
 			}
-			else if (buffer_byte == '!'){
+			else if (buffer[buffer_idx] == '@'){
 				cmdParserStatus = READING;
+				buffer_idx++;
 			}
-			else if (buffer_byte == '#'){
-				cmdParserStatus = STOP;
-				cmd_index = 0;
+			else if (buffer[buffer_idx] == '*'){
+				if (cmd_data[0] == 'R') cmd_flag = isRST;
+				else if (cmd_data[0] == 'C') cmd_flag = isCAP;
+				cmdParserStatus = INIT_UART;
+				cleanUp();
 			}
-			break;
-		case STOP:
-			if (isCmdEqualToRST(cmd_data)==1) cmd_flag = isRST;
-			else if (isCmdEqualToCAP(cmd_data)==1) cmd_flag = isCAP;
-			else return;
-			cmdParserStatus = INIT_UART;
 			break;
 		default:
 			break;
@@ -172,6 +178,6 @@ void Scan_Addr() {
 void Mcu_info(){
 	char msg[64];
 	uint32_t checkSum = msgCheckSum(&msg[0], sprintf(msg, "!INFO:MCU_VERSION-%s,FIRWARE_VERSION-%s#", MCU_VERSION, FIRMWARE_VERSION));
-	sprintf(msg, "!INFO:MCU_VERSION-%s,FIRWARE_VERSION-%s:%lu#", MCU_VERSION, FIRMWARE_VERSION, checkSum);
+	sprintf(msg, "!INFO:MCU VERSION %s, FIRWARE VERSION %s:%lu#", MCU_VERSION, FIRMWARE_VERSION, checkSum);
 	HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
 }
