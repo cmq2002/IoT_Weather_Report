@@ -10,6 +10,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "main.h"
 #include "dht20.h"
 #include "i2c-lcd.h"
@@ -35,9 +36,13 @@
 
 #define OBLED_OFF 6
 
+#define MOD_CYCLE 7
+
+#define DELIM ":"
+
 #define MAX_BUFFER_SIZE 30
 
-#define MAX_CMD_SIZE 4
+#define MAX_CMD_SIZE 6
 
 extern uint8_t buffer_byte;
 extern uint8_t buffer[MAX_BUFFER_SIZE];

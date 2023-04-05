@@ -31,9 +31,9 @@ def message(client , feed_id , payload):
         else:
             uart.writeData("@ON2*")
     if feed_id == "sending_freq":
-        print("New Operating Frequency: " + payload)
+        print("New Operating Cycle: " + payload)
         uart.setProcDelay(int(payload))
-        # uart.writeData("@FREQ:")
+        uart.writeData("@F:" + str(payload) + ":" + "*")
         # data = payload.replace("!", "")
         # data = payload.replace("#", "")
         # splitData = data.split(":")

@@ -25,6 +25,11 @@ uint8_t buffer_idx = 0;
 uint8_t cmd_flag = INIT_UART;
 uint8_t counter = WAIT;
 
+//Active cycle
+static int period = 1000;
+static int holdTime = 1500;
+static int newCycle = 0;
+
 void rst_buffer(){
 	for(int i=0; i<MAX_BUFFER_SIZE; i++)
 		buffer[i] = ' ';
@@ -57,6 +62,12 @@ void cmd_parser_fsm(){
 		else if (cmd_data[0] == 'O' && cmd_data[1] == 'F' && cmd_data[2] == 'F' && cmd_data[3] == '1') cmd_flag = isRST;
 		else if (cmd_data[0] == 'O' && cmd_data[1] == 'N' && cmd_data[2] == '2') cmd_flag = OBLED_ON;
 		else if (cmd_data[0] == 'O' && cmd_data[1] == 'F' && cmd_data[2] == 'F' && cmd_data[3] == '2') cmd_flag = OBLED_OFF;
+		else if (cmd_data[0] == 'F' && cmd_data[1] == ':'){
+			cmd_flag = MOD_CYCLE;
+			char* payload = strtok((char*)cmd_data, DELIM);
+			payload = strtok(NULL, DELIM);
+			newCycle = atoi(payload);
+		}
 		cleanUp();
 	}
 }
@@ -107,12 +118,12 @@ void uart_control_fsm()
 			if (timer2_flag == 1){
 				turnLedOn();
 				dht20_output();
-				setTimer2(1000);
+				setTimer2(period);
 			}
 			turnLedOff();
 			break;
 		case isCAP:
-			setTimer3(1500);
+			setTimer3(holdTime);
 			cmd_flag = WAIT;
 			turnLedOn();
 			break;
@@ -129,6 +140,13 @@ void uart_control_fsm()
 			break;
 		case OBLED_OFF:
 			turnOBLedOff();
+			cmd_flag = INIT_UART;
+			break;
+		case MOD_CYCLE:
+			period = newCycle*100;
+			char msg[64];
+			sprintf(msg, "Freq: %d", period);
+			HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
 			cmd_flag = INIT_UART;
 			break;
 		default:
