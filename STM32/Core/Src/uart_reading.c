@@ -110,11 +110,12 @@ void groupAction(){
 void uart_control_fsm()
 {
 	switch (cmd_flag){
-		case INIT_UART:
+		case INIT_UART:{
 			cmd_flag = AUTO;
 			setTimer2(1);
 			break;
-		case AUTO:
+		}
+		case AUTO:{
 			if (timer2_flag == 1){
 				turnLedOn();
 				dht20_output();
@@ -122,33 +123,46 @@ void uart_control_fsm()
 			}
 			turnLedOff();
 			break;
-		case isCAP:
+		}
+		case isCAP:{
 			setTimer3(holdTime);
 			cmd_flag = WAIT;
 			turnLedOn();
 			break;
-		case WAIT:
+		}
+		case WAIT:{
 			turnLedOn();
-			if (timer3_flag == 1) cmd_flag = INIT_UART;
+			if (timer3_flag == 1){
+				cmd_flag = INIT_UART;
+				char msg[64];
+				uint32_t checkSum = msgCheckSum(&msg[0], sprintf(msg, "!BUTTON1:REVERT#"));
+				sprintf(msg, "!BUTTON1:REVERT:%lu#", checkSum);
+				HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
+			}
 			break;
-		case isRST:
+		}
+		case isRST:{
 			cmd_flag = INIT_UART;
 			break;
-		case OBLED_ON:
+		}
+		case OBLED_ON:{
 			turnOBLedOn();
 			cmd_flag = INIT_UART;
 			break;
-		case OBLED_OFF:
+		}
+		case OBLED_OFF:{
 			turnOBLedOff();
 			cmd_flag = INIT_UART;
 			break;
-		case MOD_CYCLE:
+		}
+		case MOD_CYCLE:{
 			period = newCycle*100;
-			char msg[64];
-			sprintf(msg, "Freq: %d", period);
-			HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
+//			char msg[64];
+//			sprintf(msg, "!Freq Changed: %d#", period);
+//			HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
 			cmd_flag = INIT_UART;
 			break;
+		}
 		default:
 			break;
 	}

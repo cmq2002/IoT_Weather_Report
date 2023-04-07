@@ -4,7 +4,7 @@
 ../Core/Src/uart_reading.c:51:6:cmd_parser_fsm	16	static
 ../Core/Src/uart_reading.c:76:6:counter10s	4	static
 ../Core/Src/uart_reading.c:80:6:groupAction	8	static
-../Core/Src/uart_reading.c:110:6:uart_control_fsm	72	static
-../Core/Src/uart_reading.c:157:10:msgCheckSum	24	static
-../Core/Src/uart_reading.c:165:6:Scan_Addr	120	static
-../Core/Src/uart_reading.c:192:6:Mcu_info	88	static
+../Core/Src/uart_reading.c:110:6:uart_control_fsm	80	static
+../Core/Src/uart_reading.c:171:10:msgCheckSum	24	static
+../Core/Src/uart_reading.c:179:6:Scan_Addr	120	static
+../Core/Src/uart_reading.c:206:6:Mcu_info	88	static
