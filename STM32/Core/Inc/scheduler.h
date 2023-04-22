@@ -23,16 +23,10 @@ typedef struct{
 
 void SCH_Init();
 
-void SCH_MakePlaceForNewTask(uint8_t pos);
-
 void SCH_Add_Task (void (*pFunction)(), uint32_t DELAY, uint32_t PERIOD);
 
 void SCH_Update(void);
 
-void SCH_Delete_Task(uint32_t taskID);
-
 void SCH_Dispatch_Tasks(void);
-
-void SCH_Testing();
 
 #endif /* INC_SCHEDULER_H_ */

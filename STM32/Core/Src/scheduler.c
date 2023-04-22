@@ -59,6 +59,7 @@ void SCH_Delete_Task (uint32_t taskID){
 	SCH_tasks_G[current_index_task-1].Delay = 0;
 	SCH_tasks_G[current_index_task-1].Period = 0;
 	SCH_tasks_G[current_index_task-1].RunMe = 0;
+	SCH_tasks_G[current_index_task-1].TaskID = 0;
 
 	current_index_task--;
 }

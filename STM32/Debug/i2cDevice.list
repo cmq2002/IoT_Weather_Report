@@ -37,13 +37,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  16 .debug_macro  00019cb3  00000000  00000000  000350e8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00013ca7  00000000  00000000  0004ed9b  2**0
+ 17 .debug_line   00013cad  00000000  00000000  0004ed9b  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0008e63e  00000000  00000000  00062a42  2**0
+ 18 .debug_str    0008e63e  00000000  00000000  00062a48  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000050  00000000  00000000  000f1080  2**0
+ 19 .comment      00000050  00000000  00000000  000f1086  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00005b3c  00000000  00000000  000f10d0  2**2
+ 20 .debug_frame  00005b3c  00000000  00000000  000f10d8  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -4127,9 +4127,6 @@ void uart_control_fsm()
  8001d62:	fb02 f303 	mul.w	r3, r2, r3
  8001d66:	4a08      	ldr	r2, [pc, #32]	; (8001d88 <uart_control_fsm+0x114>)
  8001d68:	6013      	str	r3, [r2, #0]
-//			char msg[64];
-//			sprintf(msg, "!Freq Changed: %d#", period);
-//			HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
 			cmd_flag = INIT_UART;
  8001d6a:	4b05      	ldr	r3, [pc, #20]	; (8001d80 <uart_control_fsm+0x10c>)
  8001d6c:	2200      	movs	r2, #0

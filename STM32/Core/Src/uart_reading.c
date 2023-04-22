@@ -157,9 +157,6 @@ void uart_control_fsm()
 		}
 		case MOD_CYCLE:{
 			period = newCycle*100;
-//			char msg[64];
-//			sprintf(msg, "!Freq Changed: %d#", period);
-//			HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 100);
 			cmd_flag = INIT_UART;
 			break;
 		}
