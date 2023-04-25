@@ -1,12 +1,18 @@
 from Adafruit_IO import MQTTClient
+from dotenv import load_dotenv
+import os
 import uart
 import log
 import sys
 
+load_dotenv()
+
 clientInfo = open("./client_info.txt", "r")
 AIO_FEED_IDs = ["button1", "button2", "sensor1", "sensor2", "mcu-info", "sending_freq", "error-detect"]
-AIO_USERNAME = clientInfo.readline().strip()
-AIO_KEY = clientInfo.readline().strip()
+AIO_USERNAME = os.getenv("AIO_USERNAME")
+AIO_KEY = os.getenv("AIO_KEY")
+# AIO_USERNAME = clientInfo.readline().strip()
+# AIO_KEY = clientInfo.readline().strip()
 
 def connected(client):
     for feed in AIO_FEED_IDs:
@@ -34,17 +40,6 @@ def message(client , feed_id , payload):
         print("New Operating Cycle: " + payload)
         uart.setProcDelay(int(payload))
         uart.writeData("@F:" + str(payload) + ":" + "*")
-        # data = payload.replace("!", "")
-        # data = payload.replace("#", "")
-        # splitData = data.split(":")
-        # if (splitData[0] == "!FREQ"):
-        #     if (len(splitData[1]) == 1): 
-        #         return
-        #     else:
-        #         print("New Operating Frequency: " + splitData[1])
-        #         uart.setProcDelay(int(splitData[1]))
-        # else:
-        #     return
 
 client = MQTTClient(AIO_USERNAME , AIO_KEY)
 client.on_connect = connected
